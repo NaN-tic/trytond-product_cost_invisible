@@ -1,0 +1,4 @@
+<data>
+    <xpath expr="/tree/field[@name='cost_price']" position="replace">
+    </xpath>
+</data>
