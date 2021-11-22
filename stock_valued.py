@@ -7,6 +7,7 @@ from trytond.modules.product_cost_invisible.product import PYSON_STATEMENT
 
 
 class ShipmentValuedHideMixin(object):
+    __slots__ = ()
 
     @classmethod
     def __setup__(cls):
