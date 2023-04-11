@@ -13,7 +13,7 @@ class Lot(metaclass=PoolMeta):
     def __setup__(cls):
         super().__setup__()
         cls.cost_price.states['invisible'] = PYSON_STATEMENT
-        cls.cost_lines.states['invisible'] = PYSON_STATEMENT
+        cls.cost_price.states['total_cost'] = PYSON_STATEMENT
 
     @classmethod
     def view_attributes(cls):
