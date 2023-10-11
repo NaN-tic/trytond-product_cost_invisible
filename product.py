@@ -44,12 +44,10 @@ class Product(metaclass=PoolMeta):
         is_purchase = False
         is_stock = False
         try:
-            Purchase = pool.get('purchase.purchase')
             is_purchase = True
         except KeyError:
             pass
         try:
-            Location = pool.get('stock.location')
             is_stock = True
         except KeyError:
             pass
