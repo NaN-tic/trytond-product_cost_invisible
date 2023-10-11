@@ -1,8 +1,7 @@
 # This file is part product_cost_invisible module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
-from trytond.pool import PoolMeta, Pool
-from trytond.transaction import Transaction
+from trytond.pool import PoolMeta
 from trytond.modules.product_cost_invisible.product import PYSON_STATEMENT
 
 
