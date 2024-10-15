@@ -5,6 +5,7 @@ from trytond.pool import Pool
 from . import product
 from . import purchase
 from . import lot
+from . import stock
 from . import stock_valued
 
 
@@ -18,6 +19,10 @@ def register():
         purchase.PurchaseLine,
         purchase.ProductSupplier,
         depends=['purchase'],
+        module='product_cost_invisible', type_='model')
+    Pool.register(
+        stock.Location,
+        depends=['stock'],
         module='product_cost_invisible', type_='model')
     Pool.register(
         lot.Lot,
