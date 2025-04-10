@@ -41,14 +41,22 @@ class PurchaseLine(metaclass=PoolMeta):
         cls.taxes.states['invisible'] = PYSON_STATEMENT
 
     @classmethod
-    def view_attributes(cls):
+    def is_allowed_user(cls):
         pool = Pool()
         Data = pool.get('ir.model.data')
 
-        groups = Transaction().context.get('groups', [])
+        transaction = Transaction()
+        if transaction.user == 0:
+            return True
+
+        groups = transaction.context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+        return product_cost_invisible_admin_group in groups
+
+    @classmethod
+    def view_attributes(cls):
+        not_allowed_user = not cls.is_allowed_user()
         return super().view_attributes() + [
             ('/tree/field[@name="unit_price"]', 'tree_invisible',
                 not_allowed_user),
@@ -58,16 +66,14 @@ class PurchaseLine(metaclass=PoolMeta):
                 not_allowed_user),
             ]
 
-    def on_change_product(self):
-        pool = Pool()
-        Data = pool.get('ir.model.data')
+    def compute_base_price(self):
+        if not self.is_allowed_user():
+            return
+        return super().compute_base_price()
 
-        groups = Transaction().context.get('groups', [])
-        product_cost_invisible_admin_group = Data.get_id(
-            'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+    def on_change_product(self):
         super().on_change_product()
-        if not_allowed_user:
+        if not self.is_allowed_user():
             self.unit_price = Decimal(0)
 
     def on_change_quantity(self):
