@@ -19,7 +19,8 @@ class Location(metaclass=PoolMeta):
         groups = Transaction().context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+        not_allowed_user = (product_cost_invisible_admin_group not in groups
+            and not pool.get('res.user').is_administrator())
         return super().view_attributes() + [
             ('/tree/field[@name="cost_value"]', 'tree_invisible',
                 not_allowed_user)]

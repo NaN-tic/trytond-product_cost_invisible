@@ -25,7 +25,8 @@ class Purchase(metaclass=PoolMeta):
         groups = Transaction().context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+        not_allowed_user = (product_cost_invisible_admin_group not in groups
+            and not pool.get('res.user').is_administrator())
         return super().view_attributes() + [
             ('/tree/field[@name="untaxed_amount"]', 'tree_invisible',
                 not_allowed_user)]
@@ -52,7 +53,8 @@ class PurchaseLine(metaclass=PoolMeta):
         groups = transaction.context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        return product_cost_invisible_admin_group in groups
+        return (product_cost_invisible_admin_group in groups
+            or pool.get('res.user').is_administrator())
 
     @classmethod
     def view_attributes(cls):
@@ -83,7 +85,8 @@ class PurchaseLine(metaclass=PoolMeta):
         groups = Transaction().context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+        not_allowed_user = (product_cost_invisible_admin_group not in groups
+            and not pool.get('res.user').is_administrator())
         super().on_change_quantity()
         if not_allowed_user:
             self.unit_price = Decimal(0)

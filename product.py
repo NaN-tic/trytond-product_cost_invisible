@@ -5,8 +5,10 @@ from trytond.pool import PoolMeta, Pool
 from trytond.transaction import Transaction
 from trytond.pyson import Eval, Id
 
-PYSON_STATEMENT = ~Eval('context', {}).get('groups',
-            []).contains(Id('product_cost_invisible', 'group_product_cost_invisible_admin'))
+PYSON_STATEMENT = (
+    ~Eval('context', {}).get('administrator', False)
+    & ~Eval('context', {}).get('groups', []).contains(
+        Id('product_cost_invisible', 'group_product_cost_invisible_admin')))
 
 
 class Template(metaclass=PoolMeta):
@@ -55,7 +57,8 @@ class Product(metaclass=PoolMeta):
         groups = Transaction().context.get('groups', [])
         product_cost_invisible_admin_group = Data.get_id(
             'product_cost_invisible', 'group_product_cost_invisible_admin')
-        not_allowed_user = product_cost_invisible_admin_group not in groups
+        not_allowed_user = (product_cost_invisible_admin_group not in groups
+            and not pool.get('res.user').is_administrator())
         view_attributes = [
             ('/tree/field[@name="cost_price_uom"]', 'tree_invisible',
                 not_allowed_user),
